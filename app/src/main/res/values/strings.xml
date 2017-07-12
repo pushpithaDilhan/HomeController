@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Home Controller</string>
+    <string name="tv">TV controller</string>
+    <string name="ac">AC controller</string>
+</resources>
