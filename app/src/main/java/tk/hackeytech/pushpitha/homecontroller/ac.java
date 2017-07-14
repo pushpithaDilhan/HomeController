@@ -7,27 +7,26 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+
 public class ac extends AppCompatActivity {
 
     private Boolean learn_status = false;
     Button power,tempdown, tempup;
-    String number = "";
+    SignalHandler sh;
+    String number = "",ip,port;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ac);
 
+        sh = MainActivity.sh;
+
         Intent temp = getIntent();
         learn_status = temp.getBooleanExtra(MainActivity.LEARN,false);
-
-        if(learn_status){
-            number+="1";   // for learning mode
-        }else{
-            number+="0";
-        }
-
-        number+="0";   // for ac
 
         power = (Button) findViewById(R.id.button_power);
         tempdown = (Button) findViewById(R.id.button_tempdown);
@@ -37,17 +36,27 @@ public class ac extends AppCompatActivity {
 
     public void onClick(View v){
         if(v.getId()==power.getId()){
-            number+="00";
+            if(learn_status){
+                number="121";   // for learning mode
+            }else{
+                number="-4";
+            }
         }else if(v.getId()==tempdown.getId()){
-            number+="01";
+            if(learn_status){
+                number="123";   // for learning mode
+            }else{
+                number="-6";
+            }
         }else if(v.getId()==tempup.getId()){
-            number+="02";
+            if(learn_status){
+                number="122";   // for learning mode
+            }else{
+                number="-5";
+            }
         }
 
-        System.out.println(number); //testing code
         //emit signal
-        MainActivity.signalHandler.sendRequest(number,getApplicationContext());
+        sh.sendSignal(number);
 
-        number = number.substring(0,2);  // remove last 2 digits for next incrementing
     }
 }

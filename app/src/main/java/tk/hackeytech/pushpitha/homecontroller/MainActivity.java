@@ -1,6 +1,7 @@
 package tk.hackeytech.pushpitha.homecontroller;
 
 import android.content.Intent;
+import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,10 +11,14 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.net.Socket;
+
 public class MainActivity extends AppCompatActivity {
 
     private Boolean learn_status = false;
     public static final String LEARN = "LEARN";
+    public static SignalHandler sh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,19 +33,6 @@ public class MainActivity extends AppCompatActivity {
         final EditText ipText = (EditText) findViewById(R.id.ip_Text);
         final EditText portnum = (EditText) findViewById(R.id.port_Text);
 
-        btn_connect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // connect to the wifi network
-                String ip = ipText.getText().toString();
-                String port = portnum.getText().toString();
-                if(ip.isEmpty() || port.isEmpty()){
-                    Toast.makeText(getApplicationContext(),"IP or port is invalid.", Toast.LENGTH_SHORT).show();
-                }else {
-                    Toast.makeText(getApplicationContext(), "IP and port number saved", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
         check_learn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -49,6 +41,22 @@ public class MainActivity extends AppCompatActivity {
                     learn_status = true;
                 }else{
                     learn_status = false;
+                }
+            }
+        });
+
+        btn_connect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String ip = ipText.getText().toString();
+                String port = portnum.getText().toString();
+                try {
+                    sh = new SignalHandler(ip, port);
+                }catch(Exception e){}
+                if(ip.isEmpty() || port.isEmpty()){
+                    Toast.makeText(getApplicationContext(),"IP or port is invalid.", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(getApplicationContext(), "IP and port number saved", Toast.LENGTH_SHORT).show();
                 }
             }
         });
